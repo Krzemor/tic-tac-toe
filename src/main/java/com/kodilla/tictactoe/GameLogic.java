@@ -2,7 +2,7 @@ package com.kodilla.tictactoe;
 
 public class GameLogic {
 
-    private Board board;
+    public Board board;
     private char currPlayer;
 
     public GameLogic() {
@@ -44,7 +44,7 @@ public class GameLogic {
         currPlayer = (currPlayer == 'X') ? 'O' : 'X';
     }
 
-    private boolean checkWinner(char player) {
+    public boolean checkWinner(char player) {
         char [][] b = board.getBoard();
 
         //Rows, columns
