@@ -70,4 +70,8 @@ public class GameLogic {
         }
         return true;
     }
+
+    //random losowanie dopóki się nie trafi
+    //
+
 }
