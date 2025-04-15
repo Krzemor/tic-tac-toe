@@ -4,10 +4,12 @@ public class GameLogic {
 
     public Board board;
     private char currPlayer;
+    private int numToWin;
 
-    public GameLogic() {
-        board = new Board();
-        currPlayer = 'X';
+    public GameLogic(int boardSize, int numToWin) {
+        this.board = new Board(boardSize);
+        this.numToWin = numToWin;
+        this.currPlayer = 'X';
     }
 
     public void play() {
@@ -17,7 +19,7 @@ public class GameLogic {
             board.printBoard();
             System.out.println("Player: " + currPlayer);
 
-            Move move = UserDialogs.getUserMove(currPlayer);
+            Move move = UserDialogs.getUserMove(currPlayer, board.getSize());
 
             boolean validMove = board.insertMove(move.getRow(), move.getCol(), currPlayer);
 
@@ -26,7 +28,7 @@ public class GameLogic {
                 continue;
             }
 
-            if(checkWinner(currPlayer)) {
+            if(checkWinner(move.getRow(), move.getCol(), currPlayer)) {
                 board.printBoard();
                 System.out.println("Winner: " + currPlayer);
                 gameOver = true;
@@ -44,34 +46,45 @@ public class GameLogic {
         currPlayer = (currPlayer == 'X') ? 'O' : 'X';
     }
 
-    public boolean checkWinner(char player) {
-        char [][] b = board.getBoard();
-
-        //Rows, columns
-        for (int i = 0; i < b.length; i++) {
-            if ((b[i][0] == player && b[i][1] == player && b[i][2] == player) || (b[0][i] == player && b[1][i] == player && b[2][i] == player)) {
-                return true;
-            }
-        }
-
-        //Diagonals
-        return (b[0][0] == player && b[1][1] == player && b[2][2] == player) || (b[0][2] == player && b[1][1] == player && b[2][0] == player);
+    private boolean checkWinner(int row, int col, char player) {
+        return checkDirection(row, col, player, 1, 0)
+                || checkDirection(row, col, player, 0, 1)
+                || checkDirection(row, col, player, 1, 1)
+                || checkDirection(row, col, player, 1, -1);
     }
 
     private boolean isBoardFull() {
         char[][] b = board.getBoard();
 
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (b[i][j] == ' ') {
-                    return false;
-                }
+        for (char[] row : b) {
+            for (char cell : row) {
+                if (cell == ' ') return false;
             }
         }
         return true;
     }
 
-    //random losowanie dopóki się nie trafi
-    //
+    private boolean checkDirection(int row, int col, char player, int dr, int dc) {
+        int ctr = 1;
 
+        ctr += ctrInDirection(row, col, player, dr, dc);
+        ctr += ctrInDirection(row, col, player, -dr, -dc);
+
+        return ctr >= numToWin;
+    }
+
+    private int ctrInDirection(int row, int col, char player, int dr, int dc) {
+        int size = board.getSize();
+        int ctr = 0;
+        int r = row + dr;
+        int c = col + dc;
+
+        while (r >= 0 && c >= 0 && r < size && c < size && board.getBoard()[r][c] == player) {
+            ctr++;
+            r += dr;
+            c += dc;
+        }
+
+        return ctr;
+    }
 }

@@ -8,7 +8,7 @@ public class GameWithComputer {
     private ComputerLogic computerLogic;
 
     public GameWithComputer() {
-        this.board = new Board();
+        this.board = new Board(3);
         this.computerLogic = new ComputerLogic();
     }
 
@@ -23,7 +23,7 @@ public class GameWithComputer {
             Move move;
 
             if (currPlayer == player) {
-                move = UserDialogs.getUserMove(currPlayer);
+                move = UserDialogs.getUserMove(currPlayer, board.getSize());
             } else {
                 move = computerLogic.getMove(board, computer);
                 System.out.println("Computer chose: " + move.getRow() + "," + move.getCol());
